@@ -6,6 +6,7 @@
 `git clone https://gitlab.com/di-erz/tgdump.git` 
 
 `cd tgdump` 
+
 `chmod a+x tgdump` 
 
 python3.5 
