@@ -52,7 +52,10 @@ def tgdump(entities: str,
     if not _api_hash:
         raise RuntimeError('API_HASH required param')
 
-    _offset_date = dateparser.parse(offset_date)
+    if offset_date:
+        _offset_date = dateparser.parse(offset_date)
+    else:
+        _offset_date = offset_date
     client = TelegramClient(session, _phone, _api_id, _api_hash)
     if not client.authorize():
         code = input('Input received code: ')
