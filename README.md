@@ -3,7 +3,7 @@
 
 `sudo apt install virtualenv`
 
-`git clone https://gitlab.com/di-erz/tgdump.git` 
+`git clone https://bitbucket.org/nadirstream/telemachina.git` 
 
 `cd tgdump` 
 
