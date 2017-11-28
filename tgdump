@@ -1,0 +1,80 @@
+#!/usr/bin/env python3
+import os
+import cbox
+import dateparser
+import ujson
+
+from telegram import TelegramClient
+
+
+@cbox.cmd
+def tgdump(entities: str,
+           output: str=None,
+           phone: str=None,
+           api_id: int=None,
+           api_hash: str=None,
+           session: str=None,
+           senders: bool=False,
+           limit: int=20,
+           offset_date: str=None,
+           offset_id: int=0,
+           max_id: int=0,
+           min_id: int=0):
+    """Dump Telegram messages. Suports User, Chat, Channel peers.
+    ATTENTION! Do not support pipes, use --output param!
+
+    :param entities: Comma separated list of entities or filename. Support phone (string statrted with '+'), username (started with '@'), or integer ID for chats or channel.
+    :param output: Output JSON filename.
+    :param phone: International format phone number '+79998887766'. If not specified, the environment variable PHONE is used.
+    :param api_id: API_ID can get by link my.telegram.org/apps. If not specified, the environment variable API_ID is used.
+    :param api_hash: API_HASH can get by link my.telegram.org/apps. If not specified, the environment variable API_HASH is used.
+    :param session: Name of session, used for session filename, If not specified, used teporary session.
+    :param senders: If specified, then include serder info to 'peer' as 'meta' param.
+    :param limit: Number of messages to be retrieved. Due to limitations with the API retrieving more than 3000 messages will take longer than half a minute (or even more based on previous calls). The limit may also be None, which would eventually return the whole history.
+    :param offset_date: Offset date (messages *previous* to this date will be retrieved). Example 01.01.2017.
+    :param offset_id: Offset message ID (only messages *previous* to the given ID will be retrieved).
+    :param max_id: All the messages with a higher (newer) ID or equal to this will be excluded.
+    :param min_id: All the messages with a lower (older) ID or equal to this will be excluded.
+    """
+    if not os.path.isfile(entities):
+        entities = entities.split()
+    else:
+        with open(entities) as f:
+            entities = f.read().splitlines()
+
+    _phone = phone or os.environ.get('PHONE')
+    if not _phone:
+        raise RuntimeError('PHONE required param')
+    _api_id = api_id or os.environ.get('API_ID')
+    if not _api_id:
+        raise RuntimeError('API_ID required param')
+    _api_hash = api_hash or os.environ.get('API_HASH')
+    if not _api_hash:
+        raise RuntimeError('API_HASH required param')
+
+    _offset_date = dateparser.parse(offset_date)
+    client = TelegramClient(session, _phone, _api_id, _api_hash)
+    if not client.authorize():
+        code = input('Input received code: ')
+        client.sign_in_code(code)
+
+    messages = {}
+    for entity in entities:
+        messages[entity] = client.messages(
+            entity,
+            limit=limit,
+            offset_date=_offset_date,
+            offset_id=offset_id,
+            max_id=max_id,
+            min_id=min_id,
+        )
+    if output:
+        with open(output, 'w') as f:
+            ujson.dump(messages, f, ensure_ascii=False, indent=4)
+    else:
+        messages = ujson.dumps(messages, ensure_ascii=False)
+        print(messages)
+
+
+if __name__ == '__main__':
+    cbox.main(tgdump)
