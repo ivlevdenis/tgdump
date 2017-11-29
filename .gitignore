@@ -4,9 +4,10 @@
 *.ntvs*
 *.njsproj
 *.sln
-venv
+venv*
 *.sqlite3
 __pycache__
 local_settings.py
 *.session
 static/*
+*.json
