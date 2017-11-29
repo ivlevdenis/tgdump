@@ -14,7 +14,6 @@ def tgdump(entities: str,
            api_id: int=None,
            api_hash: str=None,
            session: str=None,
-           senders: bool=False,
            limit: int=20,
            offset_date: str=None,
            offset_id: int=0,
@@ -29,7 +28,6 @@ def tgdump(entities: str,
     :param api_id: API_ID can get by link my.telegram.org/apps. If not specified, the environment variable API_ID is used.
     :param api_hash: API_HASH can get by link my.telegram.org/apps. If not specified, the environment variable API_HASH is used.
     :param session: Name of session, used for session filename, If not specified, used teporary session.
-    :param senders: If specified, then include serder info to 'peer' as 'meta' param.
     :param limit: Number of messages to be retrieved. Due to limitations with the API retrieving more than 3000 messages will take longer than half a minute (or even more based on previous calls). The limit may also be None, which would eventually return the whole history.
     :param offset_date: Offset date (messages *previous* to this date will be retrieved). Example 01.01.2017.
     :param offset_id: Offset message ID (only messages *previous* to the given ID will be retrieved).
@@ -72,7 +70,7 @@ def tgdump(entities: str,
             min_id=min_id,
         )
     if output:
-        with open(output, 'w') as f:
+        with open(output, 'w', encoding='utf-8') as f:
             ujson.dump(messages, f, ensure_ascii=False, indent=4)
     else:
         messages = ujson.dumps(messages, ensure_ascii=False)
