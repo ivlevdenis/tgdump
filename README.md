@@ -1,9 +1,9 @@
-Установка
+Installation
 ==========
 
 `sudo apt install virtualenv`
 
-`git clone https://bitbucket.org/nadirstream/telemachina.git` 
+`git clone https://github.com/ivlevdenis/tgdump.git` 
 
 `cd tgdump` 
 
@@ -21,7 +21,7 @@ python3.6
 
 `pip install -r requirements.txt`
 
-Использование
+Usage
 ==============
 `cd PATH/TO/tgdump`
 
